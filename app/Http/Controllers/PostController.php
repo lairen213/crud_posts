@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use mysql_xdevapi\Exception;
 
 class PostController extends Controller
 {
@@ -59,38 +61,55 @@ class PostController extends Controller
 
         if (!$title || !$short_description || !$description || !$date_publish) {
             $errorMessages[] = 'Not all fields were specified!';
+        } elseif(!(bool)strtotime($date_publish)){
+            $errorMessages[] = 'Wrong format of date!';
         } else {
-            $post = new Post();
-            if ($type == 'edit') {
-                $post = Post::where('slug', $slug)->first();
-                $post->update([
-                    'title' => $title,
-                    'short_description' => $short_description,
-                    'description' => $description,
-                    'date_publish' => $date_publish
-                ]);
-                $data = $post;
-            } else {
-                $post = new Post([
-                    'title' => $title,
-                    'short_description' => $short_description,
-                    'description' => $description,
-                    'date_publish' => $date_publish
-                ]);
+            $date_publish = new Carbon( $date_publish );
+
+            if($date_publish->year < 1950 || $date_publish->year > 2100){
+                $errorMessages[] = 'Max year of date 2100, and min 1950!';
+            }else {
+                $post = new Post();
+                if ($type == 'edit') {
+                    $post = Post::where('slug', $slug)->first();
+                    $post->update([
+                        'title' => $title,
+                        'short_description' => $short_description,
+                        'description' => $description,
+                        'date_publish' => $date_publish
+                    ]);
+                    $data = $post;
+                } else {
+                    $post = new Post([
+                        'title' => $title,
+                        'short_description' => $short_description,
+                        'description' => $description,
+                        'date_publish' => $date_publish
+                    ]);
+                    $post->save();
+
+                    $post->update(['slug' => 'post-' . $post['id']]);
+                }
                 $post->save();
 
-                $post->update(['slug' => 'post-'.$post['id']]);
+                //If post was new, we redirecting client after success creation of post to page of this post
+                if ($type == 'add')
+                    return redirect(route('getOnePost', $post['slug']));
             }
-            $post->save();
-
-            //If post was new, we redirecting client after success creation of post to page of this post
-            if ($type == 'add')
-                return redirect(route('getOnePost', $post['slug']));
         }
 
-        //If the post was successfully edited I overwrite its new data in the data variable, which I then pass to the edit page
+        //If the post was successfully edited I redirect client to this post
         if ($type == 'edit' && !empty($errorMessages))
             $data = Post::where('slug', $slug)->first();
+        elseif($type == 'edit')
+            return redirect(route('getOnePost', $post['slug']));
+
+
+        //I add past values, so that the inputs are not empty after a restart
+        $data['title'] = $title;
+        $data['description'] = $description;
+        $data['short_description'] = $short_description;
+
 
         return view('pages.post.post-add-update', [
             'type' => $type,

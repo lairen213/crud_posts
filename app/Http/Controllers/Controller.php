@@ -14,9 +14,7 @@ class Controller extends BaseController
 
     //Method for beautify datetime
     public function beautifyDateTime($datetime){
-        $months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
         $startTime = new Datetime($datetime);
-        return $months[(int)$startTime->format('m') - 1].' '.(int)$startTime->format('d').', '.$startTime->format('Y').' at '.$startTime->format('H') . ':' . $startTime->format('m');
+        return $startTime->format('F').' '.(int)$startTime->format('d').', '.$startTime->format('Y').' at '.$startTime->format('H') . ':' . $startTime->format('m');
     }
 }

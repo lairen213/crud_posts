@@ -34,7 +34,7 @@
 
             <div class="mb-3">
                 <label for="date_publish" class="form-label">Date publish</label>
-                <input type="datetime-local" class="form-control" id="date_publish" name="date_publish" @if(isset($data['date_publish']) && $data['date_publish'])value="{{date('Y-m-d\TH:i', strtotime($data['date_publish']))}}"@endif>
+                <input min="1999-12-31" type="datetime-local" class="form-control" id="date_publish" name="date_publish" @if(isset($data['date_publish']) && $data['date_publish'])value="{{date('Y-m-d\TH:i', strtotime($data['date_publish']))}}"@endif>
             </div>
 
             <button type="submit" class="btn btn-outline-success">Сохранить</button>
