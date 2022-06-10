@@ -6,10 +6,10 @@
     @include('includes.login_button')
     <a href="{{route('index')}}" class="btn btn-outline-dark">Back</a>
     <hr>
-    <div class="row">
+
 
         <!-- POSTS -->
-        <div class="col-12 card">
+        <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{$post['title']}}</h5>
                 <p class="card-text">{!! $post['description'] !!}</p>
@@ -28,5 +28,5 @@
             </div>
 
         </div>
-    </div>
+
 @endsection
