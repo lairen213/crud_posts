@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\CommentReaction;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,5 +28,38 @@ class CommentController extends Controller
         }
 
         return redirect(route('getOnePost', $post_slug));
+    }
+
+    public function addReaction($comment_id, Request $request){
+        $comment = Comment::find($comment_id);
+
+        if($comment && $request->exists('type')){
+            $reaction = new CommentReaction([
+                'user_id' => Auth::id(),
+                'comment_id' => $comment_id,
+                'type' => $request->get('type')
+            ]);
+            $reaction->save();
+        }else{
+            return response()->json(['status' => 'error'], 404);
+        }
+
+        return response()->json(['status' => 'ok'], 200);
+    }
+
+    public function deleteReaction($comment_id, Request $request){
+        $comment = Comment::find($comment_id);
+
+        if($comment && $request->exists('type')){
+            $reaction = CommentReaction::where('user_id', Auth::id())->where('type', $request->get('type'))->where('comment_id', $comment_id)->first();
+            if($reaction)
+                $reaction->delete();
+            else
+                return response()->json(['status' => 'error'], 404);
+        }else{
+            return response()->json(['status' => 'error'], 404);
+        }
+
+        return response()->json(['status' => 'ok'], 200);
     }
 }

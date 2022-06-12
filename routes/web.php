@@ -25,6 +25,9 @@ Route::middleware("auth")->group(function() {
     Route::post('/posts-add-update/{slug}', [PostController::class, 'addUpdatePostSubmit'])->name('addUpdatePostSubmit');
     Route::post('/comments-add/{post_slug}', [CommentController::class, 'addComment'])->name('addComment');
 
+    Route::post('/comments-add-reaction/{comment_id}', [CommentController::class, 'addReaction'])->name('addReaction');
+    Route::post('/comments-delete-reaction/{comment_id}', [CommentController::class, 'deleteReaction'])->name('deleteReaction');
+
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 

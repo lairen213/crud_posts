@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CommentReaction;
 use App\Models\Post;
 use Carbon\Carbon;
 use DateTime;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
 {
@@ -32,6 +34,13 @@ class Controller extends BaseController
         //Add beautified date to comments
         foreach ($comments as $comment) {
             $comment['date_beautified'] = Carbon::parse($comment['date'])->format('F d, H:i');
+            $comment['count_likes'] = CommentReaction::where('comment_id', $comment['id'])->where('type', 'like')->count();//Get likes count of comment
+            $comment['count_dislikes'] = CommentReaction::where('comment_id', $comment['id'])->where('type', 'dislike')->count();//Get dislikes count of comment
+
+            //Is authorised user liked or disliked this comment?
+            $comment['user_reaction'] = CommentReaction::select('type')->where('comment_id', $comment['id'])->where('user_id', Auth::id())->first();
+            if($comment['user_reaction'])
+                $comment['user_reaction'] = $comment['user_reaction']['type'];
         }
 
         return ['post' => $post, 'comments' => $comments];
