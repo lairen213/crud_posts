@@ -23,4 +23,11 @@ class Post extends Model
         'date_publish',
         'deleted'
     ];
+
+    /**
+     * Get the comments for the post.
+     */
+    public function comments(){
+        return $this->hasMany(Comment::class)->orderBy('date', 'DESC');
+    }
 }

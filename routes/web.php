@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
-
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,6 +23,7 @@ Route::middleware("auth")->group(function() {
 
     Route::get('/posts-add-update/{slug}', [PostController::class, 'addUpdatePost'])->name('addUpdatePost');
     Route::post('/posts-add-update/{slug}', [PostController::class, 'addUpdatePostSubmit'])->name('addUpdatePostSubmit');
+    Route::post('/comments-add/{post_slug}', [CommentController::class, 'addComment'])->name('addComment');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

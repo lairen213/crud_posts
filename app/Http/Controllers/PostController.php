@@ -12,7 +12,8 @@ class PostController extends Controller
     private $posts_paginate = 5;//count of posts per one page
 
     //Returns main page with posts
-    public function index(){
+    public function index()
+    {
         $posts = Post::where('deleted', 0)->paginate($this->posts_paginate);
 
         return view('pages.index', [
@@ -21,12 +22,13 @@ class PostController extends Controller
     }
 
     //Returns page with one post
-    public function getOnePost($slug){
-        $post = Post::where('slug', $slug)->where('deleted', 0)->first();
+    public function getOnePost($slug)
+    {
+        $post = $this->getPostBySlug($slug);
 
-        $post['date_publish'] = $this->beautifyDateTime($post['date_publish']);
-        return view('pages.post.post',[
-            'post' => $post
+        return view('pages.post.post', [
+            'post' => $post['post'],
+            'comments' => $post['comments']
         ]);
     }
 
@@ -35,9 +37,10 @@ class PostController extends Controller
      * I didn't delete the post directly here. I created deleted field, from which we will already understand whether the post is deleted or not.
      * Since completely delete data from the database, quite dangerous, and it is better to keep them.
     */
-    public function deletePost($slug){
+    public function deletePost($slug)
+    {
         $post = Post::where('deleted', 0)->where('slug', $slug)->first();
-        if($post) {
+        if ($post) {
             $post->update(['deleted' => 1]);
             $post->save();
         }
@@ -46,7 +49,8 @@ class PostController extends Controller
     }
 
     //Update or add post for forms
-    public function addUpdatePostSubmit($slug, Request $request){
+    public function addUpdatePostSubmit($slug, Request $request)
+    {
         $title = $request->input('title');
         $short_description = $request->input('short_description');
         $description = $request->input('description');
@@ -61,7 +65,7 @@ class PostController extends Controller
 
         if (!$title || !$short_description || !$description || !$date_publish) {
             $errorMessages[] = 'Not all fields were specified!';
-        } elseif(stristr($date_publish, '-', true) < 1950 || stristr($date_publish, '-', true) > 2100){
+        } elseif (stristr($date_publish, '-', true) < 1950 || stristr($date_publish, '-', true) > 2100) {
             $errorMessages[] = 'Wrong format of date! (Max year of date 2100, and min 1950)'; //I check by string, because all the other auxiliary classes are parsing the year and so I can't check the original
         } else {
             $post = new Post();
@@ -96,15 +100,16 @@ class PostController extends Controller
         //If the post was successfully edited I redirect client to this post
         if ($type == 'edit' && !empty($errorMessages))
             $data = Post::where('slug', $slug)->first();
-        elseif($type == 'edit')
+        elseif ($type == 'edit')
             return redirect(route('getOnePost', $post['slug']));
 
 
-        //I add past values, so that the inputs are not empty after a restart
-        $data['title'] = $title;
-        $data['description'] = $description;
-        $data['short_description'] = $short_description;
-
+        //If there were errors when adding a new post, I record the data - so that after restarting the data is not cleared
+        if ($type == 'add') {
+            $data['title'] = $title;
+            $data['description'] = $description;
+            $data['short_description'] = $short_description;
+        }
 
         return view('pages.post.post-add-update', [
             'type' => $type,
@@ -115,11 +120,12 @@ class PostController extends Controller
     }
 
     //Return the page with update/add post
-    public function addUpdatePost($slug){
+    public function addUpdatePost($slug)
+    {
         $type = 'edit';
         $data = '';
 
-        if($slug == -1)
+        if ($slug == -1)
             $type = 'add';
         else
             $data = Post::where('deleted', 0)->where('slug', $slug)->first();
