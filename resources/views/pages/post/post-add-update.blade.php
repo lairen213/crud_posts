@@ -19,12 +19,12 @@
 
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="title" @if(isset($data['title']) && $data['title'])value="{{$data['title']}}"@endif>
+                <input maxlength="250" type="text" class="form-control" id="title" name="title" @if(isset($data['title']) && $data['title'])value="{{$data['title']}}"@endif>
             </div>
 
             <div class="mb-3">
                 <label for="short_description" class="form-label">Short description</label>
-                <input type="text" class="form-control" id="short_description" name="short_description" @if(isset($data['short_description']) && $data['short_description'])value="{{$data['short_description']}}"@endif>
+                <input maxlength="250" type="text" class="form-control" id="short_description" name="short_description" @if(isset($data['short_description']) && $data['short_description'])value="{{$data['short_description']}}"@endif>
             </div>
 
             <div class="mb-3">
