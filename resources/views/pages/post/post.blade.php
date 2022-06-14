@@ -57,6 +57,17 @@
         </div>
 
         <div class="col-12 mb-5">
+            @if(!$comments->isEmpty())
+                <div class="dropdown mb-1">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Sort
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="">
+                        <li><a class="dropdown-item" href="{{ route('getOnePost', [$post['slug'], 'rate']) }}">Sort by rate</a></li>
+                        <li><a class="dropdown-item" href="{{ route('getOnePost', [$post['slug'], 'date']) }}">Sort by date</a></li>
+                    </ul>
+                </div>
+            @endif
             <div class="list-group mb-2">
                 @foreach($comments as $comment)
                     <div

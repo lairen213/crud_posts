@@ -4,7 +4,7 @@
 
 @section('content')
     @include('includes.login_button')
-    <a href="@if($type == 'add') {{route('index')}} @else {{route('getOnePost', $slug)}} @endif" class="btn btn-outline-dark">Back</a>
+    <a href="@if($type == 'add') {{route('index')}} @else {{route('getOnePost', [$slug, 'date'])}} @endif" class="btn btn-outline-dark">Back</a>
     <hr>
     @if(isset($error_messages))
         @foreach($error_messages as $error)

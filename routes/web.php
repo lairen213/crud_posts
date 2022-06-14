@@ -18,7 +18,7 @@ use App\Http\Controllers\CommentController;
 //Pages that are only available after logging in
 Route::middleware("auth")->group(function() {
     Route::get('/', [PostController::class, 'index'])->name('index');
-    Route::get('/posts/{slug}', [PostController::class, 'getOnePost'])->name('getOnePost');
+    Route::get('/posts/{slug}/{sort_type}', [PostController::class, 'getOnePost'])->name('getOnePost');
     Route::post('/posts-delete/{slug}', [PostController::class, 'deletePost'])->name('deletePost');
 
     Route::get('/posts-add-update/{slug}', [PostController::class, 'addUpdatePost'])->name('addUpdatePost');

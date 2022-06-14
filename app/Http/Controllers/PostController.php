@@ -22,14 +22,20 @@ class PostController extends Controller
     }
 
     //Returns page with one post
-    public function getOnePost($slug)
+    public function getOnePost($slug, $sort_type)
     {
-        $post = $this->getPostBySlug($slug);
+        if($sort_type != 'rate' && $sort_type != 'date')
+            $sort_type = 'date';
 
-        return view('pages.post.post', [
-            'post' => $post['post'],
-            'comments' => $post['comments']
-        ]);
+        $post = $this->getPostBySlug($slug, $sort_type);
+        if($post['post']) {
+            return view('pages.post.post', [
+                'post' => $post['post'],
+                'comments' => $post['comments']
+            ]);
+        }else{
+            abort(404);
+        }
     }
 
     /*
@@ -93,7 +99,7 @@ class PostController extends Controller
 
             //If post was new, we redirecting client after success creation of post to page of this post
             if ($type == 'add')
-                return redirect(route('getOnePost', $post['slug']));
+                return redirect(route('getOnePost', [$post['slug'], 'date']));
 
         }
 
@@ -101,7 +107,7 @@ class PostController extends Controller
         if ($type == 'edit' && !empty($errorMessages))
             $data = Post::where('slug', $slug)->first();
         elseif ($type == 'edit')
-            return redirect(route('getOnePost', $post['slug']));
+            return redirect(route('getOnePost', [$post['slug'], 'date']));
 
 
         //If there were errors when adding a new post, I record the data - so that after restarting the data is not cleared

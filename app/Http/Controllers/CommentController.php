@@ -27,7 +27,7 @@ class CommentController extends Controller
             }
         }
 
-        return redirect(route('getOnePost', $post_slug));
+        return redirect(route('getOnePost', [$post_slug, 'date']));
     }
 
     public function addReaction($comment_id, Request $request){

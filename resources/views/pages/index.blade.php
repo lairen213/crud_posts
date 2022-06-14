@@ -16,7 +16,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{$post['title']}}</h5>
                             <p class="card-text">{!! $post['short_description'] !!}</p>
-                            <a class="btn btn-outline-primary" href="{{ route('getOnePost', $post['slug']) }}">Read more</a>
+                            <a class="btn btn-outline-primary" href="{{ route('getOnePost', [$post['slug'], 'date']) }}">Read more</a>
                         </div>
                     </div>
                 </div>
