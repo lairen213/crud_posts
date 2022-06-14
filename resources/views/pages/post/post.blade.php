@@ -81,7 +81,7 @@
                         </div>
 
 
-                        <p class="mb-1 float-start" style="white-space: pre-wrap;">{{$comment->comment}}</p>
+                        <p class="mb-1 float-start" style="white-space: pre-wrap; word-break: break-all; overflow: scroll; max-height: 250px;">{{$comment->comment}}</p>
                         <div class="float-end">
                             <input type="checkbox" class="btn-check btn-reaction-check" id="btn-like-{{$comment->id}}"
                                    autocomplete="off" name="btn-reaction-{{$comment->id}}" @if($comment->user_reaction && $comment->user_reaction == 'like') checked @endif>
